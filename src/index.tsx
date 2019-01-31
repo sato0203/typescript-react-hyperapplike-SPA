@@ -1,12 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { React,app } from "./lib/hyperapplike";
 import * as serviceWorker from './serviceWorker';
+import _states, { States } from "./states";
+import _actions, { Actions } from "./actions"
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const view = (state:States, actions:Actions) => (
+  <div>
+    <h1>{state.count}</h1>
+    <button onClick={() => actions.count.down(1)}>-</button>
+    <button onClick={() => actions.count.up(1)}>+</button>
+  </div>
+);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
+const element = document.getElementById('root');
+
+app(_states, _actions, view, document.getElementById("root"));
+
 serviceWorker.unregister();
