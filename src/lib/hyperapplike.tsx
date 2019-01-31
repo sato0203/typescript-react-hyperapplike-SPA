@@ -1,18 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, ReactComponentElement } from "react";
 import ReactDOM from "react-dom";
-import { States } from "../states";
-import _actions from "../actions";
 
-export type Actions = {
-  [key:string]:((value:any) => (state:States) => States)|Actions
+type Actions<S> = {
+  [key:string]:((value:any) => (state:S) => S)|Actions<S>
 }
 
-type MapToComponentActions<T> = {[P in keyof T]:T[P] extends (value:infer I) => (state:States) => States ? (value:I) => void : MapToComponentActions<T[P]>}
-type ComponentActions = MapToComponentActions<typeof _actions>
+export type ComponentActions<S,A> = {[P in keyof A]:A[P] extends (value:infer I) => (state:S) => S ? (value:I) => void : ComponentActions<S,A[P]>}
 
-const useApp = (initialState:States, actionsDefs:Actions) => {
+function useApp<S extends Object,A extends Actions<S>>(initialState:S, actionsDefs:A){
   const [state, setState] = useState(initialState);
-  const mapToSetState = (as:Actions) => {
+  const mapToSetState = (as:Actions<S>) => {
     const keys = Object.keys(as);
     const answer = keys.reduce((prev,cur) => {
       const prop = as[cur];
@@ -23,7 +20,7 @@ const useApp = (initialState:States, actionsDefs:Actions) => {
       }
       prev[cur] = mapToSetState(prop)
       return prev
-    },{} as any) as ComponentActions
+    },{} as any) as ComponentActions<S,A>
     return answer
   }
 
@@ -34,9 +31,9 @@ const useApp = (initialState:States, actionsDefs:Actions) => {
   };
 }
 
-export function app(initialState:States , actionsDefs:Actions, view:any, element:any) {
+export function app<S extends Object,A extends Actions<S>>(initialState:S , actionsDefs:A, view:(state:S,action:ComponentActions<S,A>) => JSX.Element, element:any) {
   const App = () => {
-    const { state, actions } = useApp(initialState, actionsDefs);
+    const { state, actions } = useApp<S,A>(initialState, actionsDefs);
     return view(state, actions);
   } 
   ReactDOM.render(<App />, element);

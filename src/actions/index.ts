@@ -1,10 +1,7 @@
-import states from "../states"
+import count from "./Count"
 
 const actions =  {
-    count:{
-        down:   (value:number) => (state:typeof states) => ({ count: state.count - value }),
-        up:     (value:number) => (state:typeof states) => ({ count: state.count + value })
-    } 
+    count
 };
 
 export type Actions = typeof actions
