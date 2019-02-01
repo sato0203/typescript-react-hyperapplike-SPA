@@ -1,5 +1,6 @@
+import count from "./Count"
 const states =  {
-    count: 0
+    count
 };
 
 export default states;

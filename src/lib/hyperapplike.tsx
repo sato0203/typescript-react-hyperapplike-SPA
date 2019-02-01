@@ -1,15 +1,20 @@
 import React, { useState, ReactComponentElement } from "react";
 import ReactDOM from "react-dom";
 
-type Actions<S> = {
-  [key:string]:((value:any) => (state:S) => S)|Actions<S>
+export type HyperAppLikeActions<S> = {
+  [key:string]:((value:any) => (state:S) => S)|HyperAppLikeActions<S>
 }
+
+export type HyperAppView<S,A> = React.FunctionComponent<{
+  state:S,
+  actions:ComponentActions<S,A>
+}>
 
 export type ComponentActions<S,A> = {[P in keyof A]:A[P] extends (value:infer I) => (state:S) => S ? (value:I) => void : ComponentActions<S,A[P]>}
 
-function useApp<S extends Object,A extends Actions<S>>(initialState:S, actionsDefs:A){
+function useApp<S extends Object,A extends HyperAppLikeActions<S>>(initialState:S, actionsDefs:A){
   const [state, setState] = useState(initialState);
-  const mapToSetState = (as:Actions<S>) => {
+  const mapToSetState = (as:HyperAppLikeActions<S>) => {
     const keys = Object.keys(as);
     const answer = keys.reduce((prev,cur) => {
       const prop = as[cur];
@@ -31,7 +36,7 @@ function useApp<S extends Object,A extends Actions<S>>(initialState:S, actionsDe
   };
 }
 
-export function app<S extends Object,A extends Actions<S>>(initialState:S , actionsDefs:A, view:(state:S,action:ComponentActions<S,A>) => JSX.Element, element:any) {
+export function app<S extends Object,A extends HyperAppLikeActions<S>>(initialState:S , actionsDefs:A, view:(state:S,action:ComponentActions<S,A>) => JSX.Element, element:any) {
   const App = () => {
     const { state, actions } = useApp<S,A>(initialState, actionsDefs);
     return view(state, actions);

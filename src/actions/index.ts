@@ -1,7 +1,7 @@
 import count from "./Count"
 
 const actions =  {
-    count
+    count:Object.assign({},count)
 };
 
 export type Actions = typeof actions
