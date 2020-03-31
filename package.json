@@ -7,7 +7,7 @@
     "@types/lodash": "^4.14.120",
     "@types/node": "11.13.8",
     "@types/react": "16.8.15",
-    "@types/react-dom": "16.8.4",
+    "@types/react-dom": "16.9.6",
     "lodash": "^4.17.11",
     "react": "16.8.6",
     "react-dom": "16.8.6",
